@@ -124,6 +124,46 @@
   .month-note{font-size:12px; color:var(--muted); margin:0; display:flex; align-items:center; gap:6px;}
   .month-note .dot{width:7px;height:7px;border-radius:50%;background:var(--s-warning); flex:none;}
 
+  /* ---------- month dropdown (multi-select) ---------- */
+  .month-dropdown{position:relative;}
+  .month-dd-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:9px; cursor:pointer;
+    min-width:150px; justify-content:space-between;
+  }
+  .month-dd-btn:hover{border-color:var(--ink-2);}
+  .month-dd-chevron{width:10px; height:10px; flex:none; color:var(--muted); transition:transform .15s;}
+  .month-dropdown.open .month-dd-chevron{transform:rotate(180deg);}
+  .month-dd-panel{
+    display:none;
+    position:absolute; top:calc(100% + 6px); right:0; z-index:10;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.12);
+    padding:8px; min-width:220px; max-height:320px; overflow-y:auto;
+  }
+  .month-dropdown.open .month-dd-panel{display:block;}
+  .month-dd-actions{display:flex; gap:6px; padding:2px 4px 8px; border-bottom:1px solid var(--border-2); margin-bottom:6px;}
+  .month-dd-actions button{
+    font-size:11px; font-weight:700; color:var(--ink-2); background:var(--surface-2);
+    border:1px solid var(--border-2); padding:4px 9px; border-radius:6px; cursor:pointer;
+  }
+  .month-dd-actions button:hover{background:var(--border-2);}
+  .month-dd-year{
+    font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.04em;
+    padding:6px 6px 4px; text-transform:uppercase;
+  }
+  .month-dd-row{
+    display:flex; align-items:center; gap:8px; padding:6px 6px; border-radius:7px;
+    cursor:pointer; font-size:13px; color:var(--ink);
+  }
+  .month-dd-row:hover{background:var(--surface-2);}
+  .month-dd-row input{accent-color:var(--ink); width:14px; height:14px; flex:none; cursor:pointer;}
+  .month-dd-row.is-ongoing .month-dd-row-label::after{
+    content:'em andamento'; font-size:10px; font-weight:600; color:var(--muted);
+    margin-left:6px; text-transform:none; letter-spacing:0;
+  }
+
   /* ---------- company filter ---------- */
   .company-filter{
     display:flex; align-items:center; flex-wrap:wrap; gap:8px;
@@ -278,24 +318,24 @@
     </div>
 
     <div class="company-filter" id="scopeFilter">
-      <span class="cf-label">Inadimplência apenas em aberto:</span>
-      <button type="button" class="cf-chip active" data-scope="sim">Sim</button>
-      <button type="button" class="cf-chip" data-scope="nao">Não</button>
+      <span class="cf-label">Considerar acordos?</span>
+      <button type="button" class="cf-chip" data-scope="sim">Sim</button>
+      <button type="button" class="cf-chip active" data-scope="nao">Não</button>
     </div>
   </div>
 
   <div class="month-control" id="monthControl">
-    <div class="month-filter" id="monthFilter">
-      <span class="cf-label">Mês:</span>
-      <button type="button" class="cf-chip" data-month="Janeiro">Jan</button>
-      <button type="button" class="cf-chip" data-month="Fevereiro">Fev</button>
-      <button type="button" class="cf-chip" data-month="Março">Mar</button>
-      <button type="button" class="cf-chip" data-month="Abril">Abr</button>
-      <button type="button" class="cf-chip" data-month="Maio">Mai</button>
-      <button type="button" class="cf-chip" data-month="Junho">Jun</button>
-      <button type="button" class="cf-chip" data-month="Julho">Jul</button>
-      <button type="button" class="cf-chip" data-month="Agosto">Ago</button>
-      <button type="button" class="cf-chip active" data-month="Setembro">Set</button>
+    <div class="month-filter">
+      <span class="cf-label">Período:</span>
+      <div class="month-dropdown" id="monthDropdown">
+        <button type="button" class="month-dd-btn" id="monthDdBtn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="monthDdLabel">Selecionar meses</span>
+          <svg viewBox="0 0 12 12" fill="none" class="month-dd-chevron"><path d="M2.5 4.5l3.5 3 3.5-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="month-dd-panel" id="monthDdPanel" role="listbox" aria-multiselectable="true">
+          <!-- grupos por ano + checkboxes gerados via JS a partir de PERIODS -->
+        </div>
+      </div>
     </div>
     <div class="month-notes">
       <p class="month-note" id="monthNote"></p>
@@ -423,14 +463,48 @@
 
 <div class="tooltip" id="tooltip"></div>
 
-<script type="application/json" id="dataStore">{"updatedAt":"2026-09-14","months":{"Janeiro":{"companies":{"Operação Própria":{"previsao":394617,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":394617},"Do For You":{"previsao":220471,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":220471},"Franqueadora":{"previsao":462875,"aberto":0,"adimplencia":1,"acordo":12570.96,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":462875},"Plug Marketing":{"previsao":120500,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":120500},"Play Fast":{"previsao":69311,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":69311}}},"Fevereiro":{"companies":{"Operação Própria":{"previsao":374397,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":374397},"Do For You":{"previsao":289950,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":289950},"Franqueadora":{"previsao":657180,"aberto":0,"adimplencia":1,"acordo":52570.96,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":657180},"Plug Marketing":{"previsao":131500,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":131500},"Play Fast":{"previsao":77470,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":77470}}},"Março":{"companies":{"Operação Própria":{"previsao":416871,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":416871},"Do For You":{"previsao":272540,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":272540},"Franqueadora":{"previsao":697051,"aberto":4966.88,"adimplencia":0.9928744381687997,"acordo":71427.4,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":697051},"Plug Marketing":{"previsao":170909,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":170909},"Play Fast":{"previsao":107173,"aberto":71.92,"adimplencia":0.9993289354594908,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":107173}}},"Abril":{"companies":{"Operação Própria":{"previsao":370830,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":370830},"Do For You":{"previsao":180176,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":180176},"Franqueadora":{"previsao":711791,"aberto":7741.98,"adimplencia":0.9891232398274212,"acordo":35617.72,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":711791},"Plug Marketing":{"previsao":228568,"aberto":5681.82,"adimplencia":0.9751416646249694,"acordo":16318.2,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":228568},"Play Fast":{"previsao":99172,"aberto":71.92,"adimplencia":0.9992747953051264,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":99172}}},"Maio":{"companies":{"Operação Própria":{"previsao":378307,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":378307},"Do For You":{"previsao":283480,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":283480},"Franqueadora":{"previsao":856630,"aberto":7786.34,"adimplencia":0.9909104981147053,"acordo":23046.76,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":856630},"Plug Marketing":{"previsao":222336,"aberto":5681.82,"adimplencia":0.9744448942141624,"acordo":16318.2,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":222336},"Play Fast":{"previsao":105593,"aberto":143.84,"adimplencia":0.9986377884897674,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":105593}}},"Junho":{"companies":{"Operação Própria":{"previsao":393138,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":393138},"Do For You":{"previsao":300000,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":300000},"Franqueadora":{"previsao":748555,"aberto":10302.32,"adimplencia":0.9862370567292984,"acordo":35617.72,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":748555},"Plug Marketing":{"previsao":220677,"aberto":8522.73,"adimplencia":0.9613791650239943,"acordo":16318.2,"recuperado":2840.91,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":220677},"Play Fast":{"previsao":114709,"aberto":143.84,"adimplencia":0.9987460443382821,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":114709}}},"Julho":{"companies":{"Operação Própria":{"previsao":378377,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":378377},"Do For You":{"previsao":44175,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":44175},"Franqueadora":{"previsao":835132,"aberto":24189.48,"adimplencia":0.9710351417500467,"acordo":46386.46,"recuperado":3142.74,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":835132},"Plug Marketing":{"previsao":244411,"aberto":34090.92,"adimplencia":0.8605180617893631,"acordo":16318.2,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":244411},"Play Fast":{"previsao":116386,"aberto":4899.84,"adimplencia":0.9579000910762463,"acordo":2378,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":116386}}},"Agosto":{"companies":{"Operação Própria":{"previsao":401409,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":401409},"Do For You":{"previsao":274637,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":274637},"Franqueadora":{"previsao":920305,"aberto":82665.06,"adimplencia":0.910176452371768,"acordo":50283.84,"recuperado":47141.1,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":920305},"Plug Marketing":{"previsao":274792,"aberto":59829.55,"adimplencia":0.7822733194561705,"acordo":32653.44,"recuperado":28579.55,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":274792},"Play Fast":{"previsao":121269,"aberto":8319.68,"adimplencia":0.9313948329746267,"acordo":0,"recuperado":19634.9,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":121269}}},"Setembro":{"companies":{"Operação Própria":{"previsao":395247,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Do For You":{"previsao":96260,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Franqueadora":{"previsao":936297,"aberto":16525.03,"adimplencia":0.9823506536921511,"acordo":3142.74,"recuperado":6285.48,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Plug Marketing":{"previsao":243722,"aberto":11022.73,"adimplencia":0.9547733483230895,"acordo":2272.73,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Play Fast":{"previsao":132608,"aberto":5362.68,"adimplencia":0.9595599058880309,"acordo":0,"recuperado":1189,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}}}}}}</script>
+<script type="application/json" id="dataStore">{"updatedAt":"2026-09-14","months":{"2025-01":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-02":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-03":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-04":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-05":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-06":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-07":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-08":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-09":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-10":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-11":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2025-12":{"companies":{"Operação Própria":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Do For You":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Franqueadora":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Plug Marketing":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0},"Play Fast":{"previsao":0,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":0}}},"2026-01":{"companies":{"Operação Própria":{"previsao":394617,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":394617},"Do For You":{"previsao":220471,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":220471},"Franqueadora":{"previsao":462875,"aberto":0,"adimplencia":1,"acordo":12570.96,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":462875},"Plug Marketing":{"previsao":120500,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":120500},"Play Fast":{"previsao":69311,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":69311}}},"2026-02":{"companies":{"Operação Própria":{"previsao":374397,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":374397},"Do For You":{"previsao":289950,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":289950},"Franqueadora":{"previsao":657180,"aberto":0,"adimplencia":1,"acordo":52570.96,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":657180},"Plug Marketing":{"previsao":131500,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":131500},"Play Fast":{"previsao":77470,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":77470}}},"2026-03":{"companies":{"Operação Própria":{"previsao":416871,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":416871},"Do For You":{"previsao":272540,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":272540},"Franqueadora":{"previsao":697051,"aberto":4966.88,"adimplencia":0.9928744381687997,"acordo":71427.4,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":697051},"Plug Marketing":{"previsao":170909,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":170909},"Play Fast":{"previsao":107173,"aberto":71.92,"adimplencia":0.9993289354594908,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":107173}}},"2026-04":{"companies":{"Operação Própria":{"previsao":370830,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":370830},"Do For You":{"previsao":180176,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":180176},"Franqueadora":{"previsao":711791,"aberto":7741.98,"adimplencia":0.9891232398274212,"acordo":35617.72,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":711791},"Plug Marketing":{"previsao":228568,"aberto":5681.82,"adimplencia":0.9751416646249694,"acordo":16318.2,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":228568},"Play Fast":{"previsao":99172,"aberto":71.92,"adimplencia":0.9992747953051264,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":99172}}},"2026-05":{"companies":{"Operação Própria":{"previsao":378307,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":378307},"Do For You":{"previsao":283480,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":283480},"Franqueadora":{"previsao":856630,"aberto":7786.34,"adimplencia":0.9909104981147053,"acordo":23046.76,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":856630},"Plug Marketing":{"previsao":222336,"aberto":5681.82,"adimplencia":0.9744448942141624,"acordo":16318.2,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":222336},"Play Fast":{"previsao":105593,"aberto":143.84,"adimplencia":0.9986377884897674,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":105593}}},"2026-06":{"companies":{"Operação Própria":{"previsao":393138,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":393138},"Do For You":{"previsao":300000,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":300000},"Franqueadora":{"previsao":748555,"aberto":10302.32,"adimplencia":0.9862370567292984,"acordo":35617.72,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":748555},"Plug Marketing":{"previsao":220677,"aberto":8522.73,"adimplencia":0.9613791650239943,"acordo":16318.2,"recuperado":2840.91,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":220677},"Play Fast":{"previsao":114709,"aberto":143.84,"adimplencia":0.9987460443382821,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":114709}}},"2026-07":{"companies":{"Operação Própria":{"previsao":378377,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":378377},"Do For You":{"previsao":44175,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":44175},"Franqueadora":{"previsao":835132,"aberto":24189.48,"adimplencia":0.9710351417500467,"acordo":46386.46,"recuperado":3142.74,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":835132},"Plug Marketing":{"previsao":244411,"aberto":34090.92,"adimplencia":0.8605180617893631,"acordo":16318.2,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":244411},"Play Fast":{"previsao":116386,"aberto":4899.84,"adimplencia":0.9579000910762463,"acordo":2378,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":116386}}},"2026-08":{"companies":{"Operação Própria":{"previsao":401409,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":401409},"Do For You":{"previsao":274637,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":274637},"Franqueadora":{"previsao":920305,"aberto":82665.06,"adimplencia":0.910176452371768,"acordo":50283.84,"recuperado":47141.1,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":920305},"Plug Marketing":{"previsao":274792,"aberto":59829.55,"adimplencia":0.7822733194561705,"acordo":32653.44,"recuperado":28579.55,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":274792},"Play Fast":{"previsao":121269,"aberto":8319.68,"adimplencia":0.9313948329746267,"acordo":0,"recuperado":19634.9,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0},"faturamento_realizado":121269}}},"2026-09":{"companies":{"Operação Própria":{"previsao":395247,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Do For You":{"previsao":96260,"aberto":0,"adimplencia":1,"acordo":0,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Franqueadora":{"previsao":936297,"aberto":16525.03,"adimplencia":0.9823506536921511,"acordo":3142.74,"recuperado":6285.48,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Plug Marketing":{"previsao":243722,"aberto":11022.73,"adimplencia":0.9547733483230895,"acordo":2272.73,"recuperado":0,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}},"Play Fast":{"previsao":132608,"aberto":5362.68,"adimplencia":0.9595599058880309,"acordo":0,"recuperado":1189,"aging":{"0-30":0,"31-60":0,"61-90":0,"90+":0}}}}}}</script>
 
 <script>
 (function(){
-  var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'];
-  var MONTH_SHORT = {Janeiro:'Jan', Fevereiro:'Fev', Março:'Mar', Abril:'Abr', Maio:'Mai', Junho:'Jun', Julho:'Jul', Agosto:'Ago', Setembro:'Set'};
-  var MONTH_LOWER = {Janeiro:'janeiro', Fevereiro:'fevereiro', Março:'março', Abril:'abril', Maio:'maio', Junho:'junho', Julho:'julho', Agosto:'agosto', Setembro:'setembro'};
   var COMPANIES = ['Operação Própria','Do For You','Franqueadora','Plug Marketing','Play Fast'];
+
+  var MONTH_NAMES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var MONTH_SHORT_PT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  function pad2(n){ return n < 10 ? '0'+n : ''+n; }
+
+  // primeiro mês disponível na base (a planilha tem 2025 e 2026); o último
+  // mês é sempre o mês corrente, calculado a partir da data real — assim o
+  // filtro se estende sozinho a cada novo mês, sem precisar editar o código.
+  var PERIOD_START_YEAR = 2025, PERIOD_START_MONTH = 1;
+
+  function buildPeriods(){
+    var now = new Date();
+    var endYear = now.getFullYear(), endMonth = now.getMonth() + 1;
+    var periods = [], meta = {};
+    var y = PERIOD_START_YEAR, m = PERIOD_START_MONTH;
+    while(y < endYear || (y === endYear && m <= endMonth)){
+      var key = y + '-' + pad2(m);
+      periods.push(key);
+      meta[key] = {
+        year: y,
+        month: m,
+        name: MONTH_NAMES_PT[m-1],
+        short: MONTH_SHORT_PT[m-1] + '/' + String(y).slice(2),
+        lower: MONTH_NAMES_PT[m-1].toLowerCase() + '/' + y,
+        col: pad2(m) + '/' + y
+      };
+      m++; if(m > 12){ m = 1; y++; }
+    }
+    return {periods: periods, meta: meta};
+  }
+
+  var PERIODS_INFO = buildPeriods();
+  var PERIODS = PERIODS_INFO.periods;     // todos os períodos disponíveis (filtro de mês / KPIs)
+  var PERIOD_META = PERIODS_INFO.meta;
+  var CURRENT_YEAR = PERIOD_META[PERIODS[PERIODS.length-1]].year;
+  // "evolução mensal" fica restrita ao ano corrente, pra não poluir o gráfico
+  var EVO_MONTHS = PERIODS.filter(function(k){ return PERIOD_META[k].year === CURRENT_YEAR; });
 
   // dados vivos: começam com o que veio embutido no HTML; assim que a página
   // carrega, uma primeira atualização via fetch() já busca os dados mais
@@ -441,26 +515,47 @@
   var AGING_KEYS = ['0-30','31-60','61-90','90+'];
 
   // ---- aggregate data across a chosen set of months AND a chosen set of companies ----
+  // regra: "Em aberto" e "Em acordo/cessão" são saldos (estoque) — quando
+  // vários meses estão selecionados, usa-se o valor do mês mais recente
+  // selecionado, nunca a soma (senão o mesmo saldo em aberto seria contado
+  // várias vezes). "Previsão de faturamento" e "Recuperado" são fluxos —
+  // esses sim são somados ao longo dos meses selecionados.
   function computeAggregate(monthSet, companySet){
     var out = {previsao_total:0, aberto_total:0, acordo_total:0, recuperado:0, faturamento_realizado:0, companies:{}, aging:{'0-30':0,'31-60':0,'61-90':0,'90+':0}};
     var perCo = {};
     COMPANIES.forEach(function(c){ perCo[c] = {previsao:0, aberto:0, acordo:0, recuperado:0, aging:{'0-30':0,'31-60':0,'61-90':0,'90+':0}}; });
-    MONTHS.forEach(function(mKey){
-      if(!monthSet.has(mKey)) return;
+
+    var monthList = PERIODS.filter(function(k){ return monthSet.has(k); });
+    var lastMonth = monthList.length ? monthList[monthList.length - 1] : null;
+
+    // fluxo: soma em todos os meses selecionados
+    monthList.forEach(function(mKey){
       var m = DATA[mKey];
       COMPANIES.forEach(function(c){
         if(!companySet.has(c)) return;
         var cd = m.companies[c];
         out.previsao_total += cd.previsao;
-        out.aberto_total += cd.aberto;
-        out.acordo_total += cd.acordo;
         out.recuperado += cd.recuperado;
         if(cd.faturamento_realizado !== undefined){ out.faturamento_realizado += cd.faturamento_realizado; }
         var p = perCo[c];
-        p.previsao += cd.previsao; p.aberto += cd.aberto; p.acordo += cd.acordo; p.recuperado += cd.recuperado;
-        AGING_KEYS.forEach(function(k){ out.aging[k] += cd.aging[k]; p.aging[k] += cd.aging[k]; });
+        p.previsao += cd.previsao; p.recuperado += cd.recuperado;
       });
     });
+
+    // estoque: só o mês mais recente selecionado
+    if(lastMonth){
+      var lm = DATA[lastMonth];
+      COMPANIES.forEach(function(c){
+        if(!companySet.has(c)) return;
+        var cd = lm.companies[c];
+        out.aberto_total += cd.aberto;
+        out.acordo_total += cd.acordo;
+        var p = perCo[c];
+        p.aberto += cd.aberto; p.acordo += cd.acordo;
+        AGING_KEYS.forEach(function(k){ out.aging[k] += cd.aging[k]; p.aging[k] += cd.aging[k]; });
+      });
+    }
+
     COMPANIES.forEach(function(c){
       if(!companySet.has(c)) return;
       var p = perCo[c];
@@ -570,12 +665,13 @@
     track.addEventListener('mouseleave', hideTip);
   });
 
-  // ---- scope toggle: inadimplência considers only "em aberto" (sim) or aberto+acordo (não) ----
+  // ---- scope toggle: "Considerar acordos?" Sim = inadimplência soma em
+  // aberto + acordo/cessão; Não (padrão) = inadimplência considera só o em aberto ----
   var scopeButtons = Array.prototype.slice.call(document.querySelectorAll('#scopeFilter .cf-chip'));
   var abertoOnly = true;
   scopeButtons.forEach(function(btn){
     btn.addEventListener('click', function(){
-      abertoOnly = btn.getAttribute('data-scope') === 'sim';
+      abertoOnly = btn.getAttribute('data-scope') === 'nao';
       scopeButtons.forEach(function(b){ b.classList.toggle('active', b === btn); });
       renderAll();
     });
@@ -601,7 +697,7 @@
   while(svg.firstChild){ svg.removeChild(svg.firstChild); }
   var W = 460, H = 160, padL = 36, padR = 14, padT = 16, padB = 26;
   var minV = 75, maxV = 90;
-  function xPos(i){ return padL + (W - padL - padR) * (i/(MONTHS.length-1)); }
+  function xPos(i){ return padL + (W - padL - padR) * (i/(EVO_MONTHS.length-1)); }
   function yPos(v){ return padT + (H - padT - padB) * (1 - (v - minV)/(maxV - minV)); }
   var svgns = 'http://www.w3.org/2000/svg';
 
@@ -642,7 +738,7 @@
   svg.appendChild(path2);
 
   var dots = {}, valueLabels = {}, xLabels = {}, dots2 = {}, valueLabels2 = {};
-  MONTHS.forEach(function(m,i){
+  EVO_MONTHS.forEach(function(m,i){
     var cx = xPos(i);
     var dot = document.createElementNS(svgns,'circle');
     dot.setAttribute('cx',cx); dot.setAttribute('r','4');
@@ -652,7 +748,7 @@
     dot.addEventListener('mousemove', function(e){
       var rect = svg.getBoundingClientRect();
       var cy = parseFloat(dot.getAttribute('cy'));
-      showTip(cx * (rect.width/W), cy * (rect.height/H), m + '/2026 · Inadimplência: ' + valueLabels[m].textContent, svg);
+      showTip(cx * (rect.width/W), cy * (rect.height/H), PERIOD_META[m].short + ' · Inadimplência: ' + valueLabels[m].textContent, svg);
     });
     dot.addEventListener('mouseleave', hideTip);
     dot.addEventListener('click', function(){ toggleMonth(m); });
@@ -663,7 +759,7 @@
     xlbl.setAttribute('x', cx); xlbl.setAttribute('y', H - 6);
     xlbl.setAttribute('text-anchor','middle'); xlbl.setAttribute('font-size','10.5');
     xlbl.setAttribute('font-weight','600');
-    xlbl.setAttribute('fill','var(--ink-2)'); xlbl.textContent = MONTH_SHORT[m];
+    xlbl.setAttribute('fill','var(--ink-2)'); xlbl.textContent = PERIOD_META[m].name.slice(0,3);
     xlbl.style.cursor='pointer';
     xlbl.addEventListener('click', function(){ toggleMonth(m); });
     svg.appendChild(xlbl);
@@ -685,7 +781,7 @@
     dot2.addEventListener('mousemove', function(e){
       var rect = svg.getBoundingClientRect();
       var cy2 = parseFloat(dot2.getAttribute('cy'));
-      showTip(cx * (rect.width/W), cy2 * (rect.height/H), m + '/2026 · Recuperado: ' + valueLabels2[m].textContent, svg);
+      showTip(cx * (rect.width/W), cy2 * (rect.height/H), PERIOD_META[m].short + ' · Recuperado: ' + valueLabels2[m].textContent, svg);
     });
     dot2.addEventListener('mouseleave', hideTip);
     dot2.addEventListener('click', function(){ toggleMonth(m); });
@@ -705,16 +801,16 @@
   var mb = document.getElementById('monthBars');
   mb.innerHTML = '';
   var monthBarEls = {};
-  MONTHS.forEach(function(m){
+  EVO_MONTHS.forEach(function(m){
     var col = document.createElement('div'); col.className = 'col'; col.setAttribute('data-month', m);
     var val = document.createElement('div'); val.className = 'val';
     var bar = document.createElement('div'); bar.className = 'b';
-    var lbl = document.createElement('div'); lbl.className='m'; lbl.textContent = MONTH_SHORT[m];
+    var lbl = document.createElement('div'); lbl.className='m'; lbl.textContent = PERIOD_META[m].name.slice(0,3);
     col.appendChild(val); col.appendChild(bar); col.appendChild(lbl);
     col.addEventListener('click', function(){ toggleMonth(m); });
     col.addEventListener('mousemove', function(e){
       var rect = col.getBoundingClientRect();
-      showTip(rect.width/2, 0, m + ': ' + monthBarEls[m].valueLabel, col);
+      showTip(rect.width/2, 0, PERIOD_META[m].short + ': ' + monthBarEls[m].valueLabel, col);
     });
     col.addEventListener('mouseleave', hideTip);
     mb.appendChild(col);
@@ -725,64 +821,146 @@
   var mbR = document.getElementById('monthBarsRecuperado');
   mbR.innerHTML = '';
   var monthBarRecEls = {};
-  MONTHS.forEach(function(m){
+  EVO_MONTHS.forEach(function(m){
     var col = document.createElement('div'); col.className = 'col'; col.setAttribute('data-month', m);
     var val = document.createElement('div'); val.className = 'val';
     var bar = document.createElement('div'); bar.className = 'b';
-    var lbl = document.createElement('div'); lbl.className='m'; lbl.textContent = MONTH_SHORT[m];
+    var lbl = document.createElement('div'); lbl.className='m'; lbl.textContent = PERIOD_META[m].name.slice(0,3);
     col.appendChild(val); col.appendChild(bar); col.appendChild(lbl);
     col.addEventListener('click', function(){ toggleMonth(m); });
     col.addEventListener('mousemove', function(e){
       var rect = col.getBoundingClientRect();
-      showTip(rect.width/2, 0, m + ': ' + monthBarRecEls[m].valueLabel, col);
+      showTip(rect.width/2, 0, PERIOD_META[m].short + ': ' + monthBarRecEls[m].valueLabel, col);
     });
     col.addEventListener('mouseleave', hideTip);
     mbR.appendChild(col);
     monthBarRecEls[m] = {col:col, bar:bar, val:val, valueLabel:''};
   });
 
-  // ---- month filter (single-select) ----
-  var monthChips = Array.prototype.slice.call(document.querySelectorAll('#monthFilter .cf-chip'));
-  monthChips.forEach(function(chip){
-    chip.addEventListener('click', function(){ toggleMonth(chip.getAttribute('data-month')); });
+  // ---- month filter: lista suspensa com checkboxes, agrupada por ano,
+  // gerada dinamicamente a partir de PERIODS (cobre todos os anos da base) ----
+  var monthDropdown = document.getElementById('monthDropdown');
+  var monthDdBtn = document.getElementById('monthDdBtn');
+  var monthDdLabel = document.getElementById('monthDdLabel');
+  var monthDdPanel = document.getElementById('monthDdPanel');
+
+  var ddActions = document.createElement('div');
+  ddActions.className = 'month-dd-actions';
+  var btnCurrent = document.createElement('button');
+  btnCurrent.type = 'button';
+  btnCurrent.textContent = 'Só o mês atual';
+  btnCurrent.addEventListener('click', function(e){
+    e.stopPropagation();
+    selectedMonths = new Set([PERIODS[PERIODS.length - 1]]);
+    renderAll();
+  });
+  var btnYearToDate = document.createElement('button');
+  btnYearToDate.type = 'button';
+  btnYearToDate.textContent = 'Ano corrente';
+  btnYearToDate.addEventListener('click', function(e){
+    e.stopPropagation();
+    selectedMonths = new Set(EVO_MONTHS);
+    renderAll();
+  });
+  ddActions.appendChild(btnCurrent);
+  ddActions.appendChild(btnYearToDate);
+  monthDdPanel.appendChild(ddActions);
+
+  var monthChips = []; // {input, key}
+  var yearsSeen = [];
+  PERIODS.forEach(function(key){
+    var y = PERIOD_META[key].year;
+    if(yearsSeen.indexOf(y) === -1){
+      yearsSeen.push(y);
+      var yearLbl = document.createElement('div');
+      yearLbl.className = 'month-dd-year';
+      yearLbl.textContent = y;
+      monthDdPanel.appendChild(yearLbl);
+    }
+    var row = document.createElement('label');
+    row.className = 'month-dd-row';
+    if(key === PERIODS[PERIODS.length-1]){ row.classList.add('is-ongoing'); }
+    var input = document.createElement('input');
+    input.type = 'checkbox';
+    input.setAttribute('data-month', key);
+    input.addEventListener('change', function(){
+      if(!input.checked && selectedMonths.size <= 1 && selectedMonths.has(key)){
+        input.checked = true; // mantém sempre pelo menos um mês selecionado
+        return;
+      }
+      toggleMonth(key);
+    });
+    var lbl = document.createElement('span');
+    lbl.className = 'month-dd-row-label';
+    lbl.textContent = PERIOD_META[key].name;
+    row.appendChild(input);
+    row.appendChild(lbl);
+    monthDdPanel.appendChild(row);
+    monthChips.push({input: input, key: key});
   });
 
-  var selectedMonths = new Set(['Setembro']);
+  var ddOpen = false;
+  function setDdOpen(open){
+    ddOpen = open;
+    monthDropdown.classList.toggle('open', open);
+    monthDdBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  monthDdBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    setDdOpen(!ddOpen);
+  });
+  document.addEventListener('click', function(){ if(ddOpen){ setDdOpen(false); } });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && ddOpen){ setDdOpen(false); } });
+
+  var selectedMonths = new Set([PERIODS[PERIODS.length - 1]]);
   var lastAggregate = null;
 
+  // seleção múltipla: marcar/desmarcar adiciona ou remove o mês da seleção;
+  // sempre mantém pelo menos um mês selecionado
   function toggleMonth(month){
-    selectedMonths = new Set([month]);
+    if(selectedMonths.has(month)){
+      if(selectedMonths.size > 1){ selectedMonths.delete(month); }
+    } else {
+      selectedMonths.add(month);
+    }
     renderAll();
   }
 
   function renderAll(){
-    var monthList = MONTHS.filter(function(m){ return selectedMonths.has(m); });
+    var monthList = PERIODS.filter(function(m){ return selectedMonths.has(m); });
     var isSingleMonth = monthList.length === 1;
-    var includesOngoing = selectedMonths.has(MONTHS[MONTHS.length - 1]);
+    var includesOngoing = selectedMonths.has(PERIODS[PERIODS.length - 1]);
     var cur = computeAggregate(selectedMonths, selectedCompanies);
     lastAggregate = cur;
 
     var prev = null, prevLabel = null, multiNote = null;
     if(isSingleMonth){
-      var idx = MONTHS.indexOf(monthList[0]);
-      var prevKey = idx > 0 ? MONTHS[idx-1] : null;
+      var idx = PERIODS.indexOf(monthList[0]);
+      var prevKey = idx > 0 ? PERIODS[idx-1] : null;
       prev = prevKey ? computeAggregate(new Set([prevKey]), selectedCompanies) : null;
-      prevLabel = prevKey ? MONTH_LOWER[prevKey] : null;
+      prevLabel = prevKey ? PERIOD_META[prevKey].lower : null;
     } else {
       multiNote = monthList.length + ' meses selecionados';
     }
 
-    monthChips.forEach(function(chip){ chip.classList.toggle('active', selectedMonths.has(chip.getAttribute('data-month'))); });
+    monthChips.forEach(function(c){ c.input.checked = selectedMonths.has(c.key); });
+    if(isSingleMonth){
+      monthDdLabel.textContent = PERIOD_META[monthList[0]].short;
+    } else {
+      monthDdLabel.textContent = monthList.length + ' meses selecionados';
+    }
     var note = document.getElementById('monthNote');
     if(isSingleMonth){
-      var soloIsLatest = monthList[0] === MONTHS[MONTHS.length - 1];
-      note.innerHTML = (soloIsLatest ? '<span class="dot"></span>' : '') + monthList[0] + '/2026' + (soloIsLatest ? ' · mês em andamento' : ' · mês encerrado');
+      var pm = PERIOD_META[monthList[0]];
+      var soloIsLatest = monthList[0] === PERIODS[PERIODS.length - 1];
+      note.innerHTML = (soloIsLatest ? '<span class="dot"></span>' : '') + pm.name + '/' + pm.year + (soloIsLatest ? ' · mês em andamento' : ' · mês encerrado');
     } else {
-      var shortNames = monthList.map(function(m){ return MONTH_SHORT[m]; }).join(' + ');
-      note.innerHTML = (includesOngoing ? '<span class="dot"></span>' : '') + shortNames + '/2026' + (includesOngoing ? ' · inclui mês em andamento' : ' · meses encerrados');
+      // com vários meses selecionados, o botão "Período" já mostra a
+      // contagem — evita repetir a lista inteira de meses aqui embaixo
+      note.innerHTML = '';
     }
-    var monthScopeLabel = isSingleMonth ? MONTH_LOWER[monthList[0]] : monthList.map(function(m){ return MONTH_LOWER[m]; }).join(', ');
-    var monthScopeShort = isSingleMonth ? MONTH_LOWER[monthList[0]] : (monthList.length + ' meses');
+    var monthScopeLabel = isSingleMonth ? PERIOD_META[monthList[0]].lower : monthList.map(function(m){ return PERIOD_META[m].lower; }).join(', ');
+    var monthScopeShort = isSingleMonth ? PERIOD_META[monthList[0]].lower : (monthList.length + ' meses');
 
     if(includesOngoing){
       document.getElementById('kpiPrevisaoLabel').textContent = 'Previsão de faturamento';
@@ -854,7 +1032,7 @@
     document.getElementById('acordoSub').textContent = 'Valor em acordo/cessão e % já negociado sobre o valor em aberto — ' + monthScopeLabel + (allMode ? '' : ' · ' + scopeLabel);
 
     var monthInad = {}, monthAberto = {}, maxAberto = 1, monthRecuperado = {}, maxRecuperado = 1, monthRecuperadoPct = {};
-    MONTHS.forEach(function(m){
+    EVO_MONTHS.forEach(function(m){
       var agg = computeAggregate(new Set([m]), selectedCompanies);
       var inadTotal = agg.aberto_total + (abertoOnly ? 0 : agg.acordo_total);
       monthInad[m] = agg.previsao_total > 0 ? (inadTotal/agg.previsao_total) * 100 : 0;
@@ -864,9 +1042,10 @@
       if(agg.recuperado > maxRecuperado) maxRecuperado = agg.recuperado;
       monthRecuperadoPct[m] = agg.previsao_total > 0 ? (agg.recuperado/agg.previsao_total) * 100 : 0;
     });
-    document.getElementById('evoSub').textContent = 'Janeiro a setembro/2026 — inadimplência' + (abertoOnly ? '' : ' (aberto + acordo/cessão)') + ' e recuperado (% da previsão), valor em aberto (R$) e valor recuperado (R$) nas barras, conforme filtros de mês e empresa. Clique em um ponto ou barra para adicionar/remover um mês.';
+    var evoFirst = PERIOD_META[EVO_MONTHS[0]], evoLast = PERIOD_META[EVO_MONTHS[EVO_MONTHS.length-1]];
+    document.getElementById('evoSub').textContent = evoFirst.name + ' a ' + evoLast.name.toLowerCase() + '/' + evoLast.year + ' — inadimplência' + (abertoOnly ? '' : ' (aberto + acordo/cessão)') + ' e recuperado (% da previsão), valor em aberto (R$) e valor recuperado (R$) nas barras, conforme filtros de mês e empresa. Clique em um ponto ou barra para adicionar/remover um mês.';
 
-    var inadVals = MONTHS.map(function(m){ return monthInad[m]; }).concat(MONTHS.map(function(m){ return monthRecuperadoPct[m]; }));
+    var inadVals = EVO_MONTHS.map(function(m){ return monthInad[m]; }).concat(EVO_MONTHS.map(function(m){ return monthRecuperadoPct[m]; }));
     var rawMin = Math.min.apply(null, inadVals), rawMax = Math.max.apply(null, inadVals);
     var span = rawMax - rawMin;
     if(span < 8){ var mid = (rawMax+rawMin)/2; rawMin = mid-4; rawMax = mid+4; span = 8; }
@@ -875,11 +1054,11 @@
     maxV = Math.min(100, rawMax + pad);
     renderGrid();
 
-    var d = MONTHS.map(function(m,i){ return (i===0?'M':'L') + xPos(i) + ',' + yPos(monthInad[m]); }).join(' ');
+    var d = EVO_MONTHS.map(function(m,i){ return (i===0?'M':'L') + xPos(i) + ',' + yPos(monthInad[m]); }).join(' ');
     path.setAttribute('d', d);
-    var d2 = MONTHS.map(function(m,i){ return (i===0?'M':'L') + xPos(i) + ',' + yPos(monthRecuperadoPct[m]); }).join(' ');
+    var d2 = EVO_MONTHS.map(function(m,i){ return (i===0?'M':'L') + xPos(i) + ',' + yPos(monthRecuperadoPct[m]); }).join(' ');
     path2.setAttribute('d', d2);
-    MONTHS.forEach(function(m,i){
+    EVO_MONTHS.forEach(function(m,i){
       var cy = yPos(monthInad[m]);
       var isSel = selectedMonths.has(m);
       dots[m].setAttribute('cy', cy);
@@ -967,10 +1146,9 @@
 
   // a aba "Faturamento" da planilha traz blocos empilhados — Faturamento,
   // Recuperado, Inadimplência, Em aberto e Em acordo / cessão — cada um com
-  // uma linha por empresa e uma coluna por mês (MM/2026). O aging
-  // (0-30/31-60/...) só existe na aba detalhada "Base"; por isso a atualização
-  // automática fica com aging zerado.
-  var MONTH_COL = {Janeiro:'01/2026', Fevereiro:'02/2026', Março:'03/2026', Abril:'04/2026', Maio:'05/2026', Junho:'06/2026', Julho:'07/2026', Agosto:'08/2026', Setembro:'09/2026'};
+  // uma linha por empresa e uma coluna por mês (MM/AAAA, agora cobrindo 2025
+  // e 2026). O aging (0-30/31-60/...) só existe na aba detalhada "Base"; por
+  // isso a atualização automática fica com aging zerado.
   var BLOCK_NAMES = ['Faturamento', 'Recuperado', 'Inadimplência', 'Em aberto', 'Em acordo / cessão'];
 
   function parseSummaryCSV(text){
@@ -1003,9 +1181,9 @@
     var abertoBlock = blocks['Em aberto'] || blocks['Inadimplência'];
     var acordoBlock = blocks['Em acordo / cessão'];
     var months = {};
-    MONTHS.forEach(function(m, mi){
-      var col = MONTH_COL[m];
-      var isOngoing = (mi === MONTHS.length - 1);
+    PERIODS.forEach(function(m, mi){
+      var col = PERIOD_META[m].col;
+      var isOngoing = (mi === PERIODS.length - 1);
       var companies = {};
       COMPANIES.forEach(function(c){
         var previsao = valueFor(blocks['Faturamento'], col, c);
